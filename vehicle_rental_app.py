@@ -156,6 +156,11 @@ def client_page():
         else:
             st.warning("Invalid vehicle ID or vehicle not rented.")
 
+    if st.button("Logout"):
+        st.session_state["logged_in"] = False
+        st.session_state["username"] = ""
+        st.experimental_rerun()
+
 def available_vehicles_page():
     st.title("Available Vehicles")
     
