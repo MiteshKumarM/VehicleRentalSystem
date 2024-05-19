@@ -1,18 +1,69 @@
 import streamlit as st
 from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 db = client["vehicle_rental"]
 vehicles_collection = db["vehicles"]
 rentals_collection = db["rentals"]
+users_collection = db["users"]
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Admin", "Client", "Available Vehicles"])
+page = st.sidebar.radio("Go to", ["Sign Up", "Login", "Admin", "Client", "Available Vehicles"])
 
 # Define the admin key (in a real application, store this securely)
 ADMIN_KEY = "admin123"
+
+def create_user(username, password, name, address, phone, license_no):
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+    user = {
+        "username": username,
+        "password": hashed_password,
+        "name": name,
+        "address": address,
+        "phone": phone,
+        "license_no": license_no
+    }
+    users_collection.insert_one(user)
+
+def authenticate_user(username, password):
+    user = users_collection.find_one({"username": username})
+    if user and check_password_hash(user["password"], password):
+        return True
+    return False
+
+def signup_page():
+    st.title("Client Signup")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type='password')
+    name = st.text_input("Name")
+    address = st.text_area("Address")
+    phone = st.text_input("Phone Number")
+    license_no = st.text_input("License Number")
+    if st.button("Sign Up"):
+        if username and password and name and address and phone and license_no:
+            if users_collection.find_one({"username": username}):
+                st.error("Username already exists")
+            else:
+                create_user(username, password, name, address, phone, license_no)
+                st.success("Signup successful! Please login.")
+        else:
+            st.warning("Please fill out all fields")
+
+def login_page():
+    st.title("Client Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type='password')
+    if st.button("Login"):
+        if authenticate_user(username, password):
+            st.success("Login successful!")
+            st.session_state["logged_in"] = True
+            st.session_state["username"] = username
+            st.experimental_rerun()
+        else:
+            st.error("Invalid username or password")
 
 def admin_page():
     st.title("Admin Page")
@@ -71,7 +122,7 @@ def client_page():
     # Rent a Vehicle
     st.header("Rent a Vehicle")
     vehicle_to_rent = st.text_input("Enter Vehicle ID to Rent")
-    client_name = st.text_input("Client Name")
+    client_name = st.text_input("Client Name", value=st.session_state.get("username", ""))
     client_address = st.text_area("Client Address")
     client_phone = st.text_input("Client Phone Number")
     client_license = st.text_input("Client License Number")
@@ -123,6 +174,13 @@ if page == "Admin":
     else:
         st.sidebar.error("Invalid Admin Key")
 elif page == "Client":
-    client_page()
+    if "logged_in" in st.session_state and st.session_state["logged_in"]:
+        client_page()
+    else:
+        st.warning("Please login to access this page.")
 elif page == "Available Vehicles":
     available_vehicles_page()
+elif page == "Sign Up":
+    signup_page()
+elif page == "Login":
+    login_page()
