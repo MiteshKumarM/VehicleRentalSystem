@@ -1,72 +1,58 @@
-# Vehicle Rental System
+# Vehicle Rental Management System
 
-A simple vehicle rental system built with Python, Streamlit, and MongoDB. This system allows an admin to add, update, and remove vehicles, and clients to view available vehicles, rent, and return them. The application also supports exporting available vehicles to a JSON file.
+This Python script implements a simple vehicle rental management system using Streamlit for the user interface and MongoDB for data storage. The system allows users to sign up, log in, rent vehicles, return vehicles, and perform administrative tasks such as adding, updating, and removing vehicles.
 
-## Features
+## Prerequisites
 
-- **Admin Page**:
-  - Add new vehicles
-  - Update existing vehicles
-  - Remove vehicles
-- **Client Page**:
-  - Rent vehicles
-  - Return vehicles
-- **Available Vehicles Page**:
-  - View list of available vehicles
-  - Export available vehicles to a JSON file
+Before running the script, ensure you have the following installed:
 
-## Installation
+- Python 
+- Streamlit
+- pymongo
+- Werkzeug
 
-1. **Clone the repository**:
-   ```
-   git clone https://github.com/username/VehicleRentalSystem.git
-   cd VehicleRentalSystem
-   ```
+You can install the required dependencies using pip:
 
-2. **Install the required packages**:
-   ```
-   pip install streamlit pymongo
-   ```
-
-3. **Set up MongoDB**:
-   - Install MongoDB and ensure it's running on `localhost:27017`.
-   - Create a database named `vehicle_rental`.
+```
+pip install streamlit pymongo Werkzeug
+```
 
 ## Usage
 
-1. **Run the Streamlit application**:
-   ```
-   streamlit run vehicle_rental_app.py
-   ```
+1. Clone the repository or download the script (`vehicle_rental.py`).
+2. Install the required dependencies as mentioned above.
+3. Make sure MongoDB is running locally on port `27017`.
+4. Run the script:
 
-2. **Navigate to the application**:
-   - Open a web browser and go to `http://localhost:8501`.
+```
+streamlit run vehicle_rental.py
+```
 
-3. **Access the Pages**:
-   - **Admin Page**: Requires an admin key to access.
-   - **Client Page**: For clients to rent and return vehicles.
-   - **Available Vehicles Page**: View and export available vehicles.
+5. Access the application through your browser at the provided URL.
 
-## Code Overview
+## Features
 
-### Admin Page
+### User Authentication
 
-- Add Vehicle: Allows the admin to add a new vehicle with ID, name, and rental price.
-- Update Vehicle: Allows the admin to update the name and rental price of an existing vehicle.
-- Remove Vehicle: Allows the admin to remove a vehicle by ID.
+- Users can sign up with a unique username and password.
+- Passwords are securely hashed before storing them in the database.
+- Existing users can log in using their credentials.
 
 ### Client Page
 
-- Rent Vehicle: Clients can rent a vehicle by entering their details and the vehicle ID.
-- Return Vehicle: Clients can return a rented vehicle by entering the vehicle ID.
+- Logged-in users can rent vehicles by providing necessary details such as name, address, phone number, and license number.
+- They can also return rented vehicles.
+
+### Admin Page
+
+- Admins can perform CRUD operations on vehicles.
+- They can add new vehicles, update existing ones, and remove vehicles from the system.
 
 ### Available Vehicles Page
 
-- View Available Vehicles: Displays a list of all available vehicles with their details.
-- Export to JSON: Exports the list of available vehicles to a JSON file.
+- Displays a list of vehicles available for rent.
 
+## Security
 
-## Acknowledgments
-
-- [Streamlit](https://streamlit.io/)
-- [MongoDB](https://www.mongodb.com/)
+- User passwords are securely hashed using the PBKDF2 algorithm provided by Werkzeug.
+- An admin key is required to access the admin page, providing an additional layer of security.
