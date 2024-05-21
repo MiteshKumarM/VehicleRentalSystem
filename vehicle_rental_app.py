@@ -13,7 +13,7 @@ users_collection = db["users"]
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Sign Up", "Login", "Admin", "Client", "Available Vehicles"])
 
-# Define the admin key (in a real application, store this securely)
+# Define the admin key 
 ADMIN_KEY = "admin123"
 
 def create_user(username, password, name, address, phone, license_no):
